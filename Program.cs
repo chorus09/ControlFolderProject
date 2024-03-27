@@ -4,21 +4,19 @@ namespace ControlFolderProject;
 public class Program {
     private static async Task Main() {
         string folderPath = @"files";
+        string logFilePath = @"log.txt";
 
-        var observer = new FolderObserver(folderPath);
-        observer.FileChanged += (sender, fullPath) => Console.WriteLine($"File {fullPath} changed");
-        observer.FileCreated += (sender, fullPath) => Console.WriteLine($"File {fullPath} created");
-        observer.FileDeleted += (sender, fullPath) => Console.WriteLine($"File {fullPath} deleted");
-        observer.FileRenamed += (sender, names) => Console.WriteLine($"File renamed from {names.OldName} to {names.NewName}");
+        var observer = new FolderObserver(folderPath, logFilePath);
+        var commandHandler = new CommandHandler(observer);
 
-        var cancellationTokenSource = new CancellationTokenSource();
+        // Запускаем наблюдение за папкой в отдельном потоке
+        Task observerTask = Task.Run(() => observer.StartObservingAsync());
 
-        // Запуск наблюдения в асинхронном режиме
-        await observer.StartObservingAsync(cancellationTokenSource.Token);
-
-        // Некоторый код здесь...
-
-        // Остановка наблюдения
-        observer.StopObserving();
+        while (true) {
+            Console.WriteLine("Available commands: commit, info <filename>, status");
+            Console.Write("Enter command: ");
+            string input = Console.ReadLine();
+            commandHandler.HandleCommand(input);
+        }
     }
 }
