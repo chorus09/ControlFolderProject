@@ -32,8 +32,6 @@ public class FolderObserver {
         _watcher.Renamed += (sender, e) => OnFileRenamed(e.OldFullPath, e.FullPath);
 
         _watcher.EnableRaisingEvents = true;
-
-        // Обработка существующих файлов в папке
         ProcessExistingFiles();
 
         await Task.Delay(-1, cancellationToken);
@@ -70,29 +68,28 @@ public class FolderObserver {
         } else if (IsJavaFile(fullPath)) {
             return new JavaFile(fullPath);
         } else {
-            // Если неизвестный тип файла, возвращаем null
             return null;
         }
     }
 
     private bool IsTextFile(string filePath) {
         string extension = Path.GetExtension(filePath);
-        return extension == ".txt" || extension == ".log"; // Пример расширений текстовых файлов
+        return extension == ".txt" || extension == ".log";
     }
 
     private bool IsImageFile(string filePath) {
         string extension = Path.GetExtension(filePath);
-        return extension == ".jpg" || extension == ".png" || extension == ".bmp"; // Пример расширений изображений
+        return extension == ".jpg" || extension == ".png" || extension == ".bmp";
     }
 
     private bool IsPythonFile(string filePath) {
         string extension = Path.GetExtension(filePath);
-        return extension == ".py"; // Расширение для файлов Python
+        return extension == ".py";
     }
 
     private bool IsJavaFile(string filePath) {
         string extension = Path.GetExtension(filePath);
-        return extension == ".java"; // Расширение для файлов Java
+        return extension == ".java";
     }
 
     private void OnFileChanged(string fullPath, WatcherChangeTypes changeType) {

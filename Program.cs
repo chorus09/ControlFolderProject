@@ -8,8 +8,6 @@ public class Program {
 
         var observer = new FolderObserver(folderPath, logFilePath);
         var commandHandler = new CommandHandler(observer);
-
-        // Запускаем наблюдение за папкой в отдельном потоке
         Task observerTask = Task.Run(() => observer.StartObservingAsync());
 
         while (true) {
